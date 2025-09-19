@@ -21,14 +21,14 @@ export default function Home() {
         >
           <div className="relative z-10 px-6 md:px-12 text-white text-center max-w-3xl">
             <h1 className="mt-4 text-4xl md:text-6xl font-semibold leading-tight drop-shadow">
-              Market Voice Agri Input Financing System
+              Market Invoice Agri Input Finance System
             </h1>
             <p className="mt-4 mx-auto max-w-2xl text-base md:text-lg text-white/90">
               Empowering farmer ecosystems with integrated advisory, identity, credit and distribution — all connected in one green, data‑driven platform.
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
               <button
-                onClick={() => document.querySelector("nav button[aria-label='Menu']")?.dispatchEvent(new MouseEvent("click", { bubbles: true }))}
+                onClick={() => document.getElementById('modules-grid')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center rounded-full border bg-white/10 text-white px-4 py-2 text-sm backdrop-blur hover:bg-white/20"
               >
                 Explore modules
@@ -97,7 +97,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Link href="/about" className="inline-flex items-center rounded-full border px-4 py-2 text-sm hover:bg-muted">Contact</Link>
             <button
-              onClick={() => document.querySelector("nav button[aria-label='Menu']")?.dispatchEvent(new MouseEvent("click", { bubbles: true }))}
+              onClick={() => document.getElementById('modules-grid')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex items-center rounded-full border px-4 py-2 text-sm hover:bg-muted"
             >Explore modules</button>
           </div>
@@ -105,7 +105,9 @@ export default function Home() {
       </section>
 
       {/* Modules grid */}
-      <ModulesGrid />
+      <div id="modules-grid">
+        <ModulesGrid />
+      </div>
     </div>
   );
 }

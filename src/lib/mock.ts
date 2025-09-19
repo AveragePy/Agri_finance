@@ -38,7 +38,7 @@ export const sections: Section[] = [
       "Contracting and integrated payments",
       "Logistics linkage",
     ],
-    image: "https://images.unsplash.com/photo-1498654077810-12f23e2f1d4f?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1600&auto=format&fit=crop", // Farmers market with fresh produce
   },
   {
     key: "farmer-data-repository",
@@ -50,31 +50,31 @@ export const sections: Section[] = [
     key: "member-management",
     title: "Farmer, VSLA & Cooperative Member Management",
     bullets: ["Unified registration & profiling", "Financial identity & roles", "Lifecycle tracking"],
-    image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=1600&auto=format&fit=crop", // Group of farmers in cooperative meeting
   },
   {
     key: "credit-scoring",
     title: "Alternative Data‑Driven Credit Scoring",
     bullets: ["Multi‑source data & scoring engine", "Eligibility scorecards & dynamic limits", "Early warning flags"],
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1600&auto=format&fit=crop", // Farmer with tablet/technology in field
   },
   {
     key: "credit-application",
     title: "Input Order & Credit Application",
     bullets: ["Order creation & basket management", "Group consolidation", "Loan application & approval workflow"],
-    image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=1600&auto=format&fit=crop", // Agricultural inputs/seeds/fertilizer bags
   },
   {
     key: "loan-management",
     title: "Loan Management & Disbursement",
     bullets: ["Origination, terms & disbursement", "Repayment mechanisms"],
-    image: "/loan-management.jpg",
+    image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=1600&auto=format&fit=crop", // Farmer counting money/financial transaction in agricultural setting
   },
   {
     key: "supplier-distribution",
     title: "Supplier & Distribution Management",
     bullets: ["Supplier registry & order fulfillment", "Delivery tracking & stock monitoring"],
-    image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1600&auto=format&fit=crop", // Agricultural supply truck/distribution in rural area
   },
 ];
 
