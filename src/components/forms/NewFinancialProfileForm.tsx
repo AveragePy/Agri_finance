@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, Shield, DollarSign, FileText, Save, Upload } from "lucide-react";
+import { CreditCard, Shield, DollarSign, Save, X } from "lucide-react";
 
 interface NewFinancialProfileFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Record<string, any>) => void;
   onCancel: () => void;
 }
 

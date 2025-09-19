@@ -7,19 +7,13 @@ import {
   Calendar,
   MapPin,
   User,
-  Phone,
-  Mail,
-  Truck,
-  Scale,
-  Tag,
-  Image,
   FileText,
   Save,
   X
 } from "lucide-react";
 
 interface NewListingFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Record<string, any>) => void;
   onCancel: () => void;
 }
 
@@ -190,7 +184,7 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
               <option value="">Select Category</option>
               <option value="vegetables">Vegetables</option>
               <option value="fruits">Fruits</option>
-              <option value="grains">Grains & Cereals</option>
+              <option value="grains">Grains &amp; Cereals</option>
               <option value="legumes">Legumes</option>
               <option value="dairy">Dairy Products</option>
               <option value="livestock">Livestock</option>
@@ -250,7 +244,7 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
       <div className="bg-gray-50 p-4 rounded-lg">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <DollarSign className="h-5 w-5 text-green-600" />
-          Pricing & Quantity
+          Pricing &amp; Quantity
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -385,7 +379,7 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
       <div className="bg-gray-50 p-4 rounded-lg">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <MapPin className="h-5 w-5 text-green-600" />
-          Location & Delivery
+          Location &amp; Delivery
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -422,7 +416,7 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
               <option value="kiambu">Kiambu County</option>
               <option value="meru">Meru County</option>
               <option value="nyeri">Nyeri County</option>
-              <option value="murang'a">Murang'a County</option>
+              <option value="murang&#39;a">Murang&#39;a County</option>
               <option value="other">Other</option>
             </select>
             {errors.county && <p className="text-red-500 text-xs mt-1">{errors.county}</p>}

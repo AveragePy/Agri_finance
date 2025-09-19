@@ -4,7 +4,7 @@ import { useState } from "react";
 import { User, Mail, Phone, MapPin, Calendar, Save } from "lucide-react";
 
 interface NewMemberFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Record<string, any>) => void;
   onCancel: () => void;
 }
 

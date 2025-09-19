@@ -39,7 +39,7 @@ export default function MarketplaceDashboard() {
     activeFarmers: new Set(mockProduceListings.map(l => l.farmerId)).size
   };
 
-  const handleNewListing = (data: any) => {
+  const handleNewListing = (data: Record<string, any>) => {
     console.log("New listing data:", data);
     // Here you would typically send the data to your backend
     setIsNewListingModalOpen(false);

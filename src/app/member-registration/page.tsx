@@ -21,7 +21,7 @@ export default function MemberRegistrationPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleNewMember = (data: any) => {
+  const handleNewMember = (data: Record<string, any>) => {
     console.log("New member data:", data);
     // Here you would typically send the data to your backend
     setIsModalOpen(false);

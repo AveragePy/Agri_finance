@@ -4,14 +4,12 @@ import { useState } from "react";
 import {
   DollarSign,
   CreditCard,
-  TrendingUp,
   AlertCircle,
   Search,
   Filter,
   Plus,
   Edit,
   Eye,
-  Calendar,
   User,
   Building,
   Shield
@@ -23,7 +21,7 @@ export default function FinancialIdentity() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleNewFinancialProfile = (data: any) => {
+  const handleNewFinancialProfile = (data: Record<string, any>) => {
     console.log("New financial profile data:", data);
     // Here you would typically send the data to your backend
     setIsModalOpen(false);

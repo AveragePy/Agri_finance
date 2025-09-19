@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Sprout,
   MapPin,
-  Calendar,
   TrendingUp,
   Users,
   Search,
@@ -12,7 +11,6 @@ import {
   Plus,
   Edit,
   Eye,
-  Tractor,
   Droplets,
   Sun
 } from "lucide-react";
@@ -23,7 +21,7 @@ export default function FarmProfiling() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleNewFarmProfile = (data: any) => {
+  const handleNewFarmProfile = (data: Record<string, any>) => {
     console.log("New farm profile data:", data);
     // Here you would typically send the data to your backend
     setIsModalOpen(false);
