@@ -3,9 +3,28 @@ import Link from "next/link";
 import ValueBar from "@/components/home/ValueBar";
 import ModulesGrid from "@/components/home/ModulesGrid";
 import ScrollReveal from "@/components/common/ScrollReveal";
+import SignInPage from "@/components/auth/SignInPage";
+import { useAuth } from "@/contexts/AuthContext";
 import { sections } from "@/lib/mock";
 
 export default function Home() {
+  const { isAuthenticated, signIn, isLoading } = useAuth();
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Show sign-in page if not authenticated
+  if (!isAuthenticated) {
+    return <SignInPage onSignIn={signIn} />;
+  }
+
+  // Show dashboard if authenticated
   return (
     <div className="space-y-0">
       {/* Full-screen, full-bleed hero */}

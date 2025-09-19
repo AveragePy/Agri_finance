@@ -79,6 +79,7 @@ export const sections: Section[] = [
 ];
 
 export const modules: ModuleCard[] = [
+  { title: "Dashboard", href: "/", color: "var(--mv-slate)", bullets: ["Overview", "Reports", "Analytics"] },
   { title: "E‑Advisory", href: "/e-advisory", color: "var(--mv-green)", bullets: ["Crop", "Weather", "Pests"] },
   { title: "E‑Marketplace", href: "/e-marketplace", color: "var(--mv-pink)", bullets: ["Listing", "Buyers", "Payments"] },
   { title: "Farmer Data Repository", href: "/farmer-data-repository", color: "var(--mv-cyan)", bullets: ["Upload", "Standardize", "Insights"] },

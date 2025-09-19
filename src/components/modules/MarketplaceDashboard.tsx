@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { mockProduceListings, mockFarmers, type ProduceListing } from "@/lib/mock-data";
 import { Package, MapPin, Calendar, Star, Filter, Search, Plus, Eye } from "lucide-react";
+import Modal from "../common/Modal";
+import NewListingForm from "../forms/NewListingForm";
 
 const statusColors = {
   available: "text-green-600 bg-green-50 border-green-200",
@@ -20,6 +22,7 @@ export default function MarketplaceDashboard() {
   const [selectedStatus, setSelectedStatus] = useState<ProduceListing["status"] | "all">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedListing, setSelectedListing] = useState<ProduceListing | null>(null);
+  const [isNewListingModalOpen, setIsNewListingModalOpen] = useState(false);
 
   const filteredListings = mockProduceListings.filter(listing => {
     const matchesStatus = selectedStatus === "all" || listing.status === selectedStatus;
@@ -34,6 +37,13 @@ export default function MarketplaceDashboard() {
     availableListings: mockProduceListings.filter(l => l.status === "available").length,
     totalValue: mockProduceListings.reduce((sum, l) => sum + (l.quantity * l.pricePerUnit), 0),
     activeFarmers: new Set(mockProduceListings.map(l => l.farmerId)).size
+  };
+
+  const handleNewListing = (data: any) => {
+    console.log("New listing data:", data);
+    // Here you would typically send the data to your backend
+    setIsNewListingModalOpen(false);
+    // You could also show a success message or refresh the listings
   };
 
   return (
@@ -93,7 +103,10 @@ export default function MarketplaceDashboard() {
             <option value="reserved">Reserved</option>
             <option value="sold">Sold</option>
           </select>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm">
+          <button
+            onClick={() => setIsNewListingModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm"
+          >
             <Plus className="h-4 w-4" />
             New Listing
           </button>
@@ -218,6 +231,19 @@ export default function MarketplaceDashboard() {
           </div>
         </div>
       )}
+
+      {/* New Listing Modal */}
+      <Modal
+        isOpen={isNewListingModalOpen}
+        onClose={() => setIsNewListingModalOpen(false)}
+        title="Create New Listing"
+        maxWidth="max-w-4xl"
+      >
+        <NewListingForm
+          onSubmit={handleNewListing}
+          onCancel={() => setIsNewListingModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }
