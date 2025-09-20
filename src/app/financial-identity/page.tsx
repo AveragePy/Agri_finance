@@ -35,9 +35,9 @@ export default function FinancialIdentity() {
       nationalId: "12345678",
       bankAccount: "KCB - ****5432",
       creditScore: 720,
-      monthlyIncome: "KES 45,000",
-      existingLoans: "KES 120,000",
-      collateralValue: "KES 850,000",
+      monthlyIncome: "UGX 45,000",
+      existingLoans: "UGX 120,000",
+      collateralValue: "UGX 850,000",
       riskLevel: "Low",
       lastUpdated: "2024-01-15",
       status: "Verified"
@@ -48,9 +48,9 @@ export default function FinancialIdentity() {
       nationalId: "23456789",
       bankAccount: "Equity - ****7890",
       creditScore: 680,
-      monthlyIncome: "KES 32,000",
-      existingLoans: "KES 85,000",
-      collateralValue: "KES 620,000",
+      monthlyIncome: "UGX 32,000",
+      existingLoans: "UGX 85,000",
+      collateralValue: "UGX 620,000",
       riskLevel: "Medium",
       lastUpdated: "2024-01-14",
       status: "Pending Verification"
@@ -61,9 +61,9 @@ export default function FinancialIdentity() {
       nationalId: "34567890",
       bankAccount: "Coop Bank - ****2468",
       creditScore: 750,
-      monthlyIncome: "KES 58,000",
-      existingLoans: "KES 200,000",
-      collateralValue: "KES 1,200,000",
+      monthlyIncome: "UGX 58,000",
+      existingLoans: "UGX 200,000",
+      collateralValue: "UGX 1,200,000",
       riskLevel: "Low",
       lastUpdated: "2024-01-13",
       status: "Verified"
@@ -115,7 +115,7 @@ export default function FinancialIdentity() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Collateral</p>
-              <p className="text-2xl font-bold text-gray-900">KES 1.2B</p>
+              <p className="text-2xl font-bold text-gray-900">UGX 1.2B</p>
             </div>
             <Building className="h-8 w-8 text-purple-600" />
           </div>

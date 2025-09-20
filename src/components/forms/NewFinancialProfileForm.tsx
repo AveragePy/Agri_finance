@@ -204,7 +204,7 @@ export default function NewFinancialProfileForm({ onSubmit, onCancel }: NewFinan
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Monthly Income (KES) *
+              Monthly Income (UGX) *
             </label>
             <input
               type="number"
@@ -257,7 +257,7 @@ export default function NewFinancialProfileForm({ onSubmit, onCancel }: NewFinan
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Loan Amount Requested (KES)
+              Loan Amount Requested (UGX)
             </label>
             <input
               type="number"
@@ -302,7 +302,7 @@ export default function NewFinancialProfileForm({ onSubmit, onCancel }: NewFinan
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estimated Value (KES)
+              Estimated Value (UGX)
             </label>
             <input
               type="number"
