@@ -1,7 +1,12 @@
 "use client";
-import { Target, Settings, Play, Pause, BarChart3, TrendingUp, AlertCircle } from "lucide-react";
+import { Target, Settings, Play, Pause, BarChart3, TrendingUp, AlertCircle, Plus } from "lucide-react";
+import { useState } from "react";
+import Modal from "@/components/common/Modal";
+import NewScoringModelForm from "@/components/forms/NewScoringModelForm";
 
 export default function ScoringEnginePage() {
+  const [isNewModelModalOpen, setIsNewModelModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -14,6 +19,13 @@ export default function ScoringEnginePage() {
         <button className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors">
           <Settings className="h-4 w-4" />
           Configure Model
+        </button>
+        <button
+          onClick={() => setIsNewModelModalOpen(true)}
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          New Model
         </button>
       </div>
 
@@ -96,6 +108,19 @@ export default function ScoringEnginePage() {
           </div>
         </div>
       </div>
+
+      {/* New Scoring Model Modal */}
+      <Modal
+        isOpen={isNewModelModalOpen}
+        onClose={() => setIsNewModelModalOpen(false)}
+        title="Create New Scoring Model"
+        maxWidth="max-w-6xl"
+      >
+        <NewScoringModelForm
+          onSubmit={(formData: any) => console.log("New Scoring Model:", formData)}
+          onCancel={() => setIsNewModelModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

@@ -17,9 +17,14 @@ import {
   Key,
   Lock
 } from "lucide-react";
+import Modal from "@/components/common/Modal";
+import AssignRoleForm from "@/components/forms/AssignRoleForm";
+import NewRoleForm from "@/components/forms/NewRoleForm";
 
 export default function RoleManagement() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAssignRoleModalOpen, setIsAssignRoleModalOpen] = useState(false);
+  const [isNewRoleModalOpen, setIsNewRoleModalOpen] = useState(false);
 
   const roles = [
     {
@@ -87,6 +92,18 @@ export default function RoleManagement() {
     }
   ];
 
+  const handleAssignRoleSubmit = (data: any) => {
+    console.log("Role assignment data:", data);
+    setIsAssignRoleModalOpen(false);
+    // Here you would typically send the data to your backend
+  };
+
+  const handleNewRoleSubmit = (data: any) => {
+    console.log("New role data:", data);
+    setIsNewRoleModalOpen(false);
+    // Here you would typically send the data to your backend
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -96,11 +113,17 @@ export default function RoleManagement() {
           <p className="text-gray-600 mt-2">Manage user roles and permissions</p>
         </div>
         <div className="flex gap-2">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <button
+            onClick={() => setIsAssignRoleModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
             <UserCheck size={20} />
             Assign Role
           </button>
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <button
+            onClick={() => setIsNewRoleModalOpen(true)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
             <Plus size={20} />
             New Role
           </button>
@@ -418,6 +441,32 @@ export default function RoleManagement() {
           </div>
         </div>
       </div>
+
+      {/* Assign Role Modal */}
+      <Modal
+        isOpen={isAssignRoleModalOpen}
+        onClose={() => setIsAssignRoleModalOpen(false)}
+        title="Assign Role to User"
+        maxWidth="max-w-3xl"
+      >
+        <AssignRoleForm
+          onSubmit={handleAssignRoleSubmit}
+          onCancel={() => setIsAssignRoleModalOpen(false)}
+        />
+      </Modal>
+
+      {/* New Role Modal */}
+      <Modal
+        isOpen={isNewRoleModalOpen}
+        onClose={() => setIsNewRoleModalOpen(false)}
+        title="Create New Role"
+        maxWidth="max-w-4xl"
+      >
+        <NewRoleForm
+          onSubmit={handleNewRoleSubmit}
+          onCancel={() => setIsNewRoleModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

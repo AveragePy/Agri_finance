@@ -1,7 +1,58 @@
 "use client";
 import { Database, Plus, Settings, CheckCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import Modal from "@/components/common/Modal";
+import NewDataSourceForm from "@/components/forms/NewDataSourceForm";
 
 export default function DataSourcesPage() {
+  const [isNewDataSourceModalOpen, setIsNewDataSourceModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
+  const dataSources = [
+    { name: "Bank Transaction History", type: "Financial", status: "Active", quality: 98, lastSync: "1h ago" },
+    { name: "Mobile Money Records", type: "Financial", status: "Active", quality: 95, lastSync: "2h ago" },
+    { name: "Agricultural Production Data", type: "Operational", status: "Active", quality: 92, lastSync: "3h ago" },
+    { name: "Weather & Climate Data", type: "Environmental", status: "Active", quality: 88, lastSync: "1h ago" },
+    { name: "Market Price Information", type: "Market", status: "Syncing", quality: 90, lastSync: "5m ago" },
+    { name: "Land Registry Records", type: "Legal", status: "Active", quality: 96, lastSync: "4h ago" },
+  ];
+
+  const handleNewDataSourceSubmit = (formData: any) => {
+    console.log("New Data Source:", formData);
+    setIsNewDataSourceModalOpen(false);
+    // Here you would typically send the data to your backend
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Active":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "Syncing":
+        return <RefreshCw className="h-4 w-4 text-yellow-500" />;
+      default:
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-100 text-green-800";
+      case "Syncing":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-red-100 text-red-800";
+    }
+  };
+
+  const filteredDataSources = dataSources.filter(source => {
+    const matchesSearch = source.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         source.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === "all" || source.status === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -12,7 +63,10 @@ export default function DataSourcesPage() {
             Manage and configure data sources for credit scoring algorithms
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors">
+        <button
+          onClick={() => setIsNewDataSourceModalOpen(true)}
+          className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors"
+        >
           <Plus className="h-4 w-4" />
           Add Data Source
         </button>
@@ -53,14 +107,7 @@ export default function DataSourcesPage() {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {[
-              { name: "Bank Transaction History", type: "Financial", status: "Active", quality: 98, lastSync: "1h ago" },
-              { name: "Mobile Money Records", type: "Financial", status: "Active", quality: 95, lastSync: "2h ago" },
-              { name: "Agricultural Production Data", type: "Operational", status: "Active", quality: 92, lastSync: "3h ago" },
-              { name: "Weather & Climate Data", type: "Environmental", status: "Active", quality: 88, lastSync: "1h ago" },
-              { name: "Market Price Information", type: "Market", status: "Syncing", quality: 90, lastSync: "5m ago" },
-              { name: "Land Registry Records", type: "Legal", status: "Active", quality: 96, lastSync: "4h ago" },
-            ].map((source, index) => (
+            {filteredDataSources.map((source, index) => (
               <div key={index} className="flex items-center justify-between p-4 rounded-lg border">
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -163,6 +210,19 @@ export default function DataSourcesPage() {
           </div>
         </div>
       </div>
+
+      {/* New Data Source Modal */}
+      <Modal
+        isOpen={isNewDataSourceModalOpen}
+        onClose={() => setIsNewDataSourceModalOpen(false)}
+        title="Add New Data Source"
+        maxWidth="max-w-4xl"
+      >
+        <NewDataSourceForm
+          onSubmit={handleNewDataSourceSubmit}
+          onCancel={() => setIsNewDataSourceModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

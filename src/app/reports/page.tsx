@@ -1,7 +1,12 @@
 "use client";
 import { BarChart3, FileText, Download, Filter, Calendar, TrendingUp } from "lucide-react";
+import Modal from "@/components/common/Modal";
+import NewReportForm from "@/components/forms/NewReportForm";
+import { useState } from "react";
 
 export default function ReportsPage() {
+  const [isNewReportModalOpen, setIsNewReportModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -17,9 +22,19 @@ export default function ReportsPage() {
             <Filter className="h-4 w-4" />
             Filter
           </button>
-          <button className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors">
+          <button
+            onClick={() => setIsNewReportModalOpen(true)}
+            className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors"
+          >
             <Download className="h-4 w-4" />
             Export
+          </button>
+          <button
+            onClick={() => setIsNewReportModalOpen(true)}
+            className="inline-flex items-center gap-2 h-9 rounded-lg bg-primary text-primary-foreground px-3 text-sm hover:bg-primary/90 transition-colors"
+          >
+            <FileText className="h-4 w-4" />
+            New Report
           </button>
         </div>
       </div>
@@ -153,6 +168,19 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
+
+      {/* New Report Modal */}
+      <Modal
+        isOpen={isNewReportModalOpen}
+        onClose={() => setIsNewReportModalOpen(false)}
+        title="Generate New Report"
+        maxWidth="max-w-4xl"
+      >
+        <NewReportForm
+          onSubmit={() => console.log("New Report Submitted")}
+          onCancel={() => setIsNewReportModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

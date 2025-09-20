@@ -20,8 +20,11 @@ import {
   Pause,
   Play
 } from "lucide-react";
+import Modal from "@/components/common/Modal";
+import NewLifecycleForm from "@/components/forms/NewLifecycleForm";
 
 export default function LifecycleTracking() {
+  const [isNewLifecycleModalOpen, setIsNewLifecycleModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const lifecycleStages = [
@@ -94,6 +97,12 @@ export default function LifecycleTracking() {
     return 'bg-red-500';
   };
 
+  const handleNewLifecycleSubmit = (formData: any) => {
+    console.log("New Lifecycle:", formData);
+    setIsNewLifecycleModalOpen(false);
+    // Here you would typically send the data to your backend
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -102,7 +111,10 @@ export default function LifecycleTracking() {
           <h1 className="text-3xl font-bold text-gray-900">Lifecycle Tracking</h1>
           <p className="text-gray-600 mt-2">Track farmer and credit lifecycle stages</p>
         </div>
-        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+        <button
+          onClick={() => setIsNewLifecycleModalOpen(true)}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+        >
           <Plus size={20} />
           New Lifecycle
         </button>
@@ -385,6 +397,19 @@ export default function LifecycleTracking() {
           </div>
         </div>
       </div>
+
+      {/* New Lifecycle Modal */}
+      <Modal
+        isOpen={isNewLifecycleModalOpen}
+        onClose={() => setIsNewLifecycleModalOpen(false)}
+        title="Create New Lifecycle"
+        maxWidth="max-w-4xl"
+      >
+        <NewLifecycleForm
+          onSubmit={handleNewLifecycleSubmit}
+          onCancel={() => setIsNewLifecycleModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

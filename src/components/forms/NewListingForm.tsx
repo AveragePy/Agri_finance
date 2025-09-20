@@ -8,8 +8,11 @@ import {
   MapPin,
   User,
   FileText,
-  Save,
-  X
+  Upload,
+  X,
+  ShoppingCart,
+  Camera,
+  Truck
 } from "lucide-react";
 
 interface NewListingFormProps {
@@ -19,167 +22,133 @@ interface NewListingFormProps {
 
 export default function NewListingForm({ onSubmit, onCancel }: NewListingFormProps) {
   const [formData, setFormData] = useState({
-    // Product Information
     productName: "",
     category: "",
-    variety: "",
     description: "",
-
-    // Pricing & Quantity
+    variety: "",
+    quality: "",
+    organicCertified: false,
     pricePerUnit: "",
     unit: "",
-    minimumQuantity: "",
+    minimumOrder: "",
     totalQuantity: "",
-
-    // Availability
     harvestDate: "",
+    expiryDate: "",
     availableFrom: "",
-    availableTo: "",
-
-    // Quality & Certification
-    qualityGrade: "",
-    organicCertified: false,
-    certificationDetails: "",
-
-    // Location & Delivery
-    farmLocation: "",
+    availableUntil: "",
     county: "",
+    subCounty: "",
+    ward: "",
+    village: "",
+    exactLocation: "",
     deliveryOptions: [],
     deliveryRadius: "",
-
-    // Seller Information
     sellerName: "",
-    contactPhone: "",
-    contactEmail: "",
+    sellerPhone: "",
+    sellerEmail: "",
+    farmName: "",
     farmSize: "",
-
-    // Additional Details
-    storageConditions: "",
-    packagingType: "",
-    specialRequirements: "",
+    certifications: "",
+    paymentMethods: [],
+    additionalNotes: "",
     images: []
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
-      setFormData(prev => ({
-        ...prev,
-        [name]: checked
-      }));
+      setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
+      setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  const handleDeliveryOptionChange = (option: string) => {
-    setFormData(prev => ({
-      ...prev,
-      deliveryOptions: prev.deliveryOptions.includes(option)
-        ? prev.deliveryOptions.filter(opt => opt !== option)
-        : [...prev.deliveryOptions, option]
-    }));
+  const handleMultiSelect = (name: string, value: string) => {
+    setFormData(prev => {
+      const currentValues = prev[name] as string[];
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value];
+      return { ...prev, [name]: newValues };
+    });
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Required fields validation
     if (!formData.productName.trim()) newErrors.productName = "Product name is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.pricePerUnit.trim()) newErrors.pricePerUnit = "Price per unit is required";
-    if (!formData.unit) newErrors.unit = "Unit is required";
+    if (!formData.category.trim()) newErrors.category = "Category is required";
+    if (!formData.pricePerUnit.trim()) newErrors.pricePerUnit = "Price is required";
+    if (!formData.unit.trim()) newErrors.unit = "Unit is required";
     if (!formData.totalQuantity.trim()) newErrors.totalQuantity = "Total quantity is required";
-    if (!formData.availableFrom) newErrors.availableFrom = "Available from date is required";
-    if (!formData.farmLocation.trim()) newErrors.farmLocation = "Farm location is required";
-    if (!formData.county) newErrors.county = "County is required";
+    if (!formData.county.trim()) newErrors.county = "County is required";
     if (!formData.sellerName.trim()) newErrors.sellerName = "Seller name is required";
-    if (!formData.contactPhone.trim()) newErrors.contactPhone = "Contact phone is required";
-
-    // Format validation
-    const phoneRegex = /^\+254\s?\d{9}$/;
-    if (formData.contactPhone && !phoneRegex.test(formData.contactPhone)) {
-      newErrors.contactPhone = "Please enter a valid Kenyan phone number (+254XXXXXXXXX)";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.contactEmail && !emailRegex.test(formData.contactEmail)) {
-      newErrors.contactEmail = "Please enter a valid email address";
-    }
-
-    // Numeric validation
-    if (formData.pricePerUnit && isNaN(Number(formData.pricePerUnit))) {
-      newErrors.pricePerUnit = "Price must be a valid number";
-    }
-
-    if (formData.totalQuantity && isNaN(Number(formData.totalQuantity))) {
-      newErrors.totalQuantity = "Quantity must be a valid number";
-    }
+    if (!formData.sellerPhone.trim()) newErrors.sellerPhone = "Seller phone is required";
+    else if (!/^(\+254|0)[17]\d{8}$/.test(formData.sellerPhone)) newErrors.sellerPhone = "Invalid Kenyan phone number";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (validateForm()) {
+    setIsSubmitting(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       onSubmit(formData);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Product Information */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Product Information Section */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <Package className="h-5 w-5 text-green-600" />
           Product Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Product Name *
             </label>
             <input
               type="text"
               name="productName"
               value={formData.productName}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.productName ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="e.g., Fresh Tomatoes"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              placeholder="Fresh Tomatoes"
             />
             {errors.productName && <p className="text-red-500 text-xs mt-1">{errors.productName}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Category *
             </label>
             <select
               name="category"
               value={formData.category}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.category ? 'border-red-500' : 'border-gray-300'
-              }`}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">Select Category</option>
               <option value="vegetables">Vegetables</option>
@@ -188,78 +157,91 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
               <option value="legumes">Legumes</option>
               <option value="dairy">Dairy Products</option>
               <option value="livestock">Livestock</option>
-              <option value="other">Other</option>
+              <option value="herbs">Herbs &amp; Spices</option>
             </select>
             {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
           </div>
 
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <FileText className="inline h-4 w-4 mr-1" />
+              Product Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              placeholder="Describe your product, quality, farming methods, etc."
+            />
+          </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Variety/Type
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Variety
             </label>
             <input
               type="text"
               name="variety"
               value={formData.variety}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              placeholder="e.g., Roma, Cherry, Beefsteak"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              placeholder="e.g., Roma, Cherry"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Quality Grade
             </label>
             <select
-              name="qualityGrade"
-              value={formData.qualityGrade}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              name="quality"
+              value={formData.quality}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             >
-              <option value="">Select Grade</option>
-              <option value="premium">Premium (Grade A)</option>
-              <option value="standard">Standard (Grade B)</option>
-              <option value="economy">Economy (Grade C)</option>
+              <option value="">Select Quality</option>
+              <option value="premium">Premium</option>
+              <option value="grade-a">Grade A</option>
+              <option value="grade-b">Grade B</option>
+              <option value="standard">Standard</option>
             </select>
           </div>
-        </div>
 
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Product Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="Describe your product, its quality, and any special features..."
-          />
+          <div className="md:col-span-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="organicCertified"
+                checked={formData.organicCertified}
+                onChange={handleChange}
+                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+              />
+              <span className="text-sm font-medium text-gray-700">Organic Certified</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      {/* Pricing & Quantity */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Pricing & Quantity Section */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-green-600" />
+          <DollarSign className="h-5 w-5 text-blue-600" />
           Pricing &amp; Quantity
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Price per Unit (KES) *
             </label>
             <input
               type="number"
               name="pricePerUnit"
               value={formData.pricePerUnit}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.pricePerUnit ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="0.00"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="50"
               min="0"
               step="0.01"
             />
@@ -267,152 +249,140 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Unit *
             </label>
             <select
               name="unit"
               value={formData.unit}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.unit ? 'border-red-500' : 'border-gray-300'
-              }`}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">Select Unit</option>
               <option value="kg">Kilogram (kg)</option>
+              <option value="g">Gram (g)</option>
+              <option value="piece">Piece</option>
+              <option value="bunch">Bunch</option>
               <option value="bag">Bag</option>
               <option value="crate">Crate</option>
-              <option value="piece">Piece</option>
               <option value="liter">Liter</option>
-              <option value="tonne">Tonne</option>
             </select>
             {errors.unit && <p className="text-red-500 text-xs mt-1">{errors.unit}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Total Quantity Available *
             </label>
             <input
               type="number"
               name="totalQuantity"
               value={formData.totalQuantity}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.totalQuantity ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="0"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="100"
               min="0"
             />
             {errors.totalQuantity && <p className="text-red-500 text-xs mt-1">{errors.totalQuantity}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Minimum Order Quantity
             </label>
             <input
               type="number"
-              name="minimumQuantity"
-              value={formData.minimumQuantity}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              placeholder="0"
+              name="minimumOrder"
+              value={formData.minimumOrder}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="10"
               min="0"
             />
           </div>
         </div>
       </div>
 
-      {/* Availability */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Availability Section */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-green-600" />
+          <Calendar className="h-5 w-5 text-amber-600" />
           Availability
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Harvest Date
             </label>
             <input
               type="date"
               name="harvestDate"
               value={formData.harvestDate}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Available From *
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Available From
             </label>
             <input
               type="date"
               name="availableFrom"
               value={formData.availableFrom}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.availableFrom ? 'border-red-500' : 'border-gray-300'
-              }`}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
             />
-            {errors.availableFrom && <p className="text-red-500 text-xs mt-1">{errors.availableFrom}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Available To
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Available Until
             </label>
             <input
               type="date"
-              name="availableTo"
-              value={formData.availableTo}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              name="availableUntil"
+              value={formData.availableUntil}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Expiry Date
+            </label>
+            <input
+              type="date"
+              name="expiryDate"
+              value={formData.expiryDate}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
             />
           </div>
         </div>
       </div>
 
-      {/* Location & Delivery */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Location & Delivery Section */}
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-green-600" />
+          <MapPin className="h-5 w-5 text-purple-600" />
           Location &amp; Delivery
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Farm Location *
-            </label>
-            <input
-              type="text"
-              name="farmLocation"
-              value={formData.farmLocation}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.farmLocation ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="e.g., Nakuru Town, Nakuru"
-            />
-            {errors.farmLocation && <p className="text-red-500 text-xs mt-1">{errors.farmLocation}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               County *
             </label>
             <select
               name="county"
               value={formData.county}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.county ? 'border-red-500' : 'border-gray-300'
-              }`}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">Select County</option>
-              <option value="nakuru">Nakuru County</option>
+              <option value="nairobi">Nairobi County</option>
               <option value="kiambu">Kiambu County</option>
               <option value="meru">Meru County</option>
               <option value="nyeri">Nyeri County</option>
@@ -423,215 +393,167 @@ export default function NewListingForm({ onSubmit, onCancel }: NewListingFormPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sub-County
+            </label>
+            <input
+              type="text"
+              name="subCounty"
+              value={formData.subCounty}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter sub-county"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ward
+            </label>
+            <input
+              type="text"
+              name="ward"
+              value={formData.ward}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter ward"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Village
+            </label>
+            <input
+              type="text"
+              name="village"
+              value={formData.village}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter village"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Truck className="inline h-4 w-4 mr-1" />
               Delivery Options
             </label>
-            <div className="space-y-2">
-              {['Farm Pickup', 'Local Delivery', 'Market Delivery', 'Transport Arranged'].map((option) => (
-                <label key={option} className="flex items-center">
+            <div className="grid grid-cols-2 gap-2">
+              {['pickup', 'delivery', 'both'].map((option) => (
+                <label key={option} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={formData.deliveryOptions.includes(option)}
-                    onChange={() => handleDeliveryOptionChange(option)}
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    onChange={() => handleMultiSelect('deliveryOptions', option)}
+                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700">{option}</span>
+                  <span className="text-sm text-gray-700 capitalize">{option}</span>
                 </label>
               ))}
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Delivery Radius (km)
-            </label>
-            <input
-              type="number"
-              name="deliveryRadius"
-              value={formData.deliveryRadius}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              placeholder="0"
-              min="0"
-            />
-          </div>
         </div>
       </div>
 
-      {/* Seller Information */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Seller Information Section */}
+      <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-6 rounded-xl border border-teal-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <User className="h-5 w-5 text-green-600" />
+          <User className="h-5 w-5 text-teal-600" />
           Seller Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Seller Name *
             </label>
             <input
               type="text"
               name="sellerName"
               value={formData.sellerName}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.sellerName ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="Full name"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+              placeholder="John Kamau"
             />
             {errors.sellerName && <p className="text-red-500 text-xs mt-1">{errors.sellerName}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Contact Phone *
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number *
             </label>
             <input
               type="tel"
-              name="contactPhone"
-              value={formData.contactPhone}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.contactPhone ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="+254 700 123 456"
+              name="sellerPhone"
+              value={formData.sellerPhone}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+              placeholder="+254712345678"
             />
-            {errors.contactPhone && <p className="text-red-500 text-xs mt-1">{errors.contactPhone}</p>}
+            {errors.sellerPhone && <p className="text-red-500 text-xs mt-1">{errors.sellerPhone}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Contact Email
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email Address
             </label>
             <input
               type="email"
-              name="contactEmail"
-              value={formData.contactEmail}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                errors.contactEmail ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="email@example.com"
+              name="sellerEmail"
+              value={formData.sellerEmail}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+              placeholder="seller@example.com"
             />
-            {errors.contactEmail && <p className="text-red-500 text-xs mt-1">{errors.contactEmail}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Farm Size (acres)
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Farm Name
             </label>
             <input
-              type="number"
-              name="farmSize"
-              value={formData.farmSize}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              placeholder="0"
-              min="0"
-              step="0.1"
+              type="text"
+              name="farmName"
+              value={formData.farmName}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+              placeholder="Green Valley Farm"
             />
           </div>
-        </div>
-      </div>
 
-      {/* Additional Details */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <FileText className="h-5 w-5 text-green-600" />
-          Additional Details
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="organicCertified"
-              checked={formData.organicCertified}
-              onChange={handleInputChange}
-              className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-            />
-            <label className="ml-2 text-sm font-medium text-gray-700">
-              Organic Certified
-            </label>
-          </div>
-
-          {formData.organicCertified && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Certification Details
-              </label>
-              <input
-                type="text"
-                name="certificationDetails"
-                value={formData.certificationDetails}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="Certification body and number"
-              />
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Storage Conditions
-              </label>
-              <input
-                type="text"
-                name="storageConditions"
-                value={formData.storageConditions}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="e.g., Cool, dry place"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Packaging Type
-              </label>
-              <input
-                type="text"
-                name="packagingType"
-                value={formData.packagingType}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="e.g., Wooden crates, plastic bags"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Special Requirements or Notes
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Additional Notes
             </label>
             <textarea
-              name="specialRequirements"
-              value={formData.specialRequirements}
-              onChange={handleInputChange}
+              name="additionalNotes"
+              value={formData.additionalNotes}
+              onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              placeholder="Any special handling, payment terms, or other requirements..."
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+              placeholder="Any additional information about the product or terms..."
             />
           </div>
         </div>
       </div>
 
-      {/* Form Actions */}
-      <div className="flex justify-end gap-4 pt-4 border-t border-gray-200">
+      {/* Enhanced Form Actions */}
+      <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+          className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 flex items-center gap-2"
         >
-          <X size={16} />
+          <X className="h-4 w-4" />
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+          disabled={isSubmitting}
+          className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 border border-transparent rounded-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
         >
-          <Save size={16} />
-          Create Listing
+          <Upload className="h-4 w-4" />
+          {isSubmitting ? "Creating Listing..." : "Create Listing"}
         </button>
       </div>
     </form>

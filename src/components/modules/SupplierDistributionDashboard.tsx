@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { mockSuppliers, mockOrders, type Supplier, type Order } from "@/lib/mock-data";
 import { Truck, Package, MapPin, Star, Phone, Clock, CheckCircle, AlertCircle, Plus, Search } from "lucide-react";
+import Modal from "@/components/common/Modal";
+import NewSupplierForm from "@/components/forms/NewSupplierForm";
+import NewOrderForm from "@/components/forms/NewOrderForm";
 
 const statusColors = {
   pending: "text-amber-600 bg-amber-50 border-amber-200",
@@ -16,6 +19,8 @@ export default function SupplierDistributionDashboard() {
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
   const filteredSuppliers = mockSuppliers.filter(supplier =>
     supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,6 +39,18 @@ export default function SupplierDistributionDashboard() {
     activeOrders: mockOrders.filter(o => o.status !== "delivered").length,
     totalOrderValue: mockOrders.reduce((sum, o) => sum + o.total, 0),
     avgRating: mockSuppliers.reduce((sum, s) => sum + s.rating, 0) / mockSuppliers.length
+  };
+
+  const handleSupplierSubmit = (data: any) => {
+    console.log("New supplier data:", data);
+    setIsSupplierModalOpen(false);
+    // Here you would typically send the data to your backend
+  };
+
+  const handleOrderSubmit = (data: any) => {
+    console.log("New order data:", data);
+    setIsOrderModalOpen(false);
+    // Here you would typically send the data to your backend
   };
 
   return (
@@ -59,7 +76,7 @@ export default function SupplierDistributionDashboard() {
             <CheckCircle className="h-5 w-5 text-green-600" />
             <span className="text-sm font-medium">Order Value</span>
           </div>
-          <div className="text-2xl font-bold mt-1">KES {stats.totalOrderValue.toLocaleString()}</div>
+          <div className="text-2xl font-bold mt-1">UGX {stats.totalOrderValue.toLocaleString()}</div>
         </div>
         <div className="rounded-lg border p-4 bg-card">
           <div className="flex items-center gap-2">
@@ -105,7 +122,10 @@ export default function SupplierDistributionDashboard() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm">
+          <button
+            onClick={() => selectedTab === "suppliers" ? setIsSupplierModalOpen(true) : setIsOrderModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm"
+          >
             <Plus className="h-4 w-4" />
             {selectedTab === "suppliers" ? "Add Supplier" : "New Order"}
           </button>
@@ -196,7 +216,7 @@ export default function SupplierDistributionDashboard() {
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Total Value:</span>
-                  <p className="font-bold text-primary">KES {order.total.toLocaleString()}</p>
+                  <p className="font-bold text-primary">UGX {order.total.toLocaleString()}</p>
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Order Date:</span>
@@ -327,7 +347,7 @@ export default function SupplierDistributionDashboard() {
                 </div>
                 <div>
                   <span className="text-sm font-medium">Total:</span>
-                  <p className="font-bold text-primary">KES {selectedOrder.total.toLocaleString()}</p>
+                  <p className="font-bold text-primary">UGX {selectedOrder.total.toLocaleString()}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium">Order Date:</span>
@@ -349,7 +369,7 @@ export default function SupplierDistributionDashboard() {
                       <span className="text-sm">{item.product}</span>
                       <div className="text-sm">
                         <span>Qty: {item.quantity}</span>
-                        <span className="ml-2 font-medium">KES {(item.quantity * item.price).toLocaleString()}</span>
+                        <span className="ml-2 font-medium">UGX {(item.quantity * item.price).toLocaleString()}</span>
                       </div>
                     </div>
                   ))}
@@ -378,6 +398,32 @@ export default function SupplierDistributionDashboard() {
           </div>
         </div>
       )}
+
+      {/* New Supplier Modal */}
+      <Modal
+        isOpen={isSupplierModalOpen}
+        onClose={() => setIsSupplierModalOpen(false)}
+        title="Add New Supplier"
+        maxWidth="max-w-4xl"
+      >
+        <NewSupplierForm
+          onSubmit={handleSupplierSubmit}
+          onCancel={() => setIsSupplierModalOpen(false)}
+        />
+      </Modal>
+
+      {/* New Order Modal */}
+      <Modal
+        isOpen={isOrderModalOpen}
+        onClose={() => setIsOrderModalOpen(false)}
+        title="Create New Order"
+        maxWidth="max-w-4xl"
+      >
+        <NewOrderForm
+          onSubmit={handleOrderSubmit}
+          onCancel={() => setIsOrderModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }
